@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  background: #08090c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+  background: #08090c;
+}
+
+body {
+  overflow: hidden;
+}
+
+button,
+textarea,
+input {
+  font: inherit;
+}
+
+.panel-cut {
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+}
+
+.panel-cut::before,
+.panel-cut::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+}
+
+.panel-cut::before {
+  border-top: 1px solid rgba(0, 240, 255, 0.45);
+  opacity: 0.45;
+}
+
+.panel-cut::after {
+  background: linear-gradient(120deg, transparent, rgba(0, 240, 255, 0.07), transparent 65%);
+  mix-blend-mode: screen;
+}
+
+.terminal-scanlines {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 100% 4px;
+}
+
+.noise-layer {
+  opacity: 0.075;
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0, rgba(0, 240, 255, 0.22) 1px, transparent 2px, transparent 52px),
+    repeating-linear-gradient(0deg, transparent 0, rgba(255, 0, 85, 0.14) 1px, transparent 2px, transparent 89px);
+}
+
+.terminal-input {
+  caret-color: #00f0ff;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.22);
+}
+
+.terminal-input::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal-input::-webkit-scrollbar-track {
+  background: rgba(8, 9, 12, 0.8);
+}
+
+.terminal-input::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.3);
+}
+
+@media (max-width: 1180px) {
+  body {
+    overflow-y: auto;
+  }
+
+  .hud-grid {
+    position: relative;
+    display: grid;
+    min-height: 100vh;
+    gap: 1rem;
+    padding-top: 1rem;
+  }
+
+  .dock-left,
+  .dock-right,
+  .dock-bottom {
+    position: relative;
+    inset: auto;
+    width: 100%;
+  }
+
+  .dock-left {
+    margin-top: 6.5rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .hud-grid {
+    padding-inline: 0.75rem;
+  }
+
+  .dock-left {
+    margin-top: 11rem;
+  }
+}
