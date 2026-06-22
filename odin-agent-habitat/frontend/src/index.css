@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #0a0a0f;
+    color: #e0e0f0;
+    font-family: 'JetBrains Mono', monospace;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track { background: #0a0a0f; }
+  ::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #00ff88; }
+}
+
+@layer components {
+  .odin-panel {
+    @apply bg-odin-surface border border-odin-border rounded-lg p-4;
+  }
+
+  .odin-btn {
+    @apply px-4 py-2 rounded font-mono text-sm font-medium transition-all duration-200 cursor-pointer border;
+  }
+
+  .odin-btn-green {
+    @apply odin-btn border-odin-green text-odin-green hover:bg-odin-green hover:text-odin-bg;
+  }
+
+  .odin-btn-cyan {
+    @apply odin-btn border-odin-cyan text-odin-cyan hover:bg-odin-cyan hover:text-odin-bg;
+  }
+
+  .odin-btn-red {
+    @apply odin-btn border-odin-red text-odin-red hover:bg-odin-red hover:text-white;
+  }
+
+  .odin-btn-yellow {
+    @apply odin-btn border-odin-yellow text-odin-yellow hover:bg-odin-yellow hover:text-odin-bg;
+  }
+
+  .odin-input {
+    @apply bg-odin-bg border border-odin-border rounded px-3 py-2 text-sm font-mono text-white
+           focus:outline-none focus:border-odin-green focus:ring-1 focus:ring-odin-green w-full;
+  }
+
+  .status-badge {
+    @apply px-2 py-0.5 rounded text-xs font-mono font-medium uppercase tracking-wider;
+  }
+}
+
+.scanline-overlay {
+  pointer-events: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 255, 136, 0.015) 3px,
+    rgba(0, 255, 136, 0.015) 4px
+  );
+  z-index: 9999;
+}
+
+.neon-glow-green { text-shadow: 0 0 8px #00ff88, 0 0 20px #00ff8866; }
+.neon-glow-cyan  { text-shadow: 0 0 8px #00d4ff, 0 0 20px #00d4ff66; }
+.neon-glow-purple { text-shadow: 0 0 8px #9b30ff, 0 0 20px #9b30ff66; }
+
+.border-glow-green { box-shadow: 0 0 12px #00ff8833; }
+.border-glow-cyan  { box-shadow: 0 0 12px #00d4ff33; }

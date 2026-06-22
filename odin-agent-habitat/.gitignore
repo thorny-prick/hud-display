@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Database
+data/odin.db
+
+# Env
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
