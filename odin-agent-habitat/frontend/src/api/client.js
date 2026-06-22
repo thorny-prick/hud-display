@@ -1,17 +1,17 @@
 const BASE = ''
 
 export async function fetchTasks() {
-  const res = await fetch(`${BASE}/tasks`)
+  const res = await fetch(`${BASE}/tasks/`)
   return res.json()
 }
 
 export async function fetchAgents() {
-  const res = await fetch(`${BASE}/agents`)
+  const res = await fetch(`${BASE}/agents/`)
   return res.json()
 }
 
 export async function createTask(payload) {
-  const res = await fetch(`${BASE}/tasks`, {
+  const res = await fetch(`${BASE}/tasks/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
