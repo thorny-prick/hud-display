@@ -10,34 +10,70 @@ const SERVICE_TYPES = [
   'Ad Creative',
 ]
 
+const DEMO_TASK = {
+  title:        '10x Python Productivity — YouTube Thumbnail',
+  service_type: 'YouTube Thumbnail',
+  brief:        'Bold, techy thumbnail for a Python productivity video. Audience: developers. Needs to stand out in dark mode feeds.',
+  style_notes:  'dark, neon green, cyberpunk, minimal text',
+}
+
+const EMPTY = { title: '', brief: '', service_type: SERVICE_TYPES[0], style_notes: '' }
+
 export default function TaskForm({ onTaskCreated }) {
-  const [form, setForm] = useState({ title: '', brief: '', service_type: SERVICE_TYPES[0], style_notes: '' })
+  const [form, setForm]       = useState(EMPTY)
   const [loading, setLoading] = useState(false)
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!form.title.trim() || !form.brief.trim()) return
+  const submit = async (data) => {
     setLoading(true)
     try {
-      const task = await createTask(form)
+      const task = await createTask(data)
       onTaskCreated(task)
-      setForm({ title: '', brief: '', service_type: SERVICE_TYPES[0], style_notes: '' })
+      setForm(EMPTY)
     } finally {
       setLoading(false)
     }
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!form.title.trim() || !form.brief.trim()) return
+    submit(form)
+  }
+
+  const handleDemo = () => {
+    if (loading) return
+    submit(DEMO_TASK)
+  }
+
   return (
     <form onSubmit={handleSubmit} className="odin-panel flex flex-col gap-4">
-      <div className="text-odin-cyan text-xs font-bold uppercase tracking-widest mb-1">
-        // New Task
+      {/* Header row with demo button */}
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-odin-cyan text-xs font-bold uppercase tracking-widest">
+          // New Task
+        </span>
+        <button
+          type="button"
+          onClick={handleDemo}
+          disabled={loading}
+          className="odin-btn border-odin-purple text-odin-purple hover:bg-odin-purple hover:text-white
+                     text-[10px] px-2 py-1 disabled:opacity-50"
+        >
+          [ RUN DEMO ]
+        </button>
       </div>
 
       <div className="flex flex-col gap-1">
         <label className="text-xs text-odin-dim">Project Title</label>
-        <input className="odin-input" placeholder="e.g. 10x Your Sales with These 5 Tricks" value={form.title} onChange={set('title')} required />
+        <input
+          className="odin-input"
+          placeholder="e.g. 10x Your Sales with These 5 Tricks"
+          value={form.title}
+          onChange={set('title')}
+          required
+        />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -60,8 +96,15 @@ export default function TaskForm({ onTaskCreated }) {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-odin-dim">Style Notes <span className="text-odin-dim/50">(optional)</span></label>
-        <input className="odin-input" placeholder="e.g. dark, bold, cinematic, minimalist..." value={form.style_notes} onChange={set('style_notes')} />
+        <label className="text-xs text-odin-dim">
+          Style Notes <span className="text-odin-dim/50">(optional)</span>
+        </label>
+        <input
+          className="odin-input"
+          placeholder="e.g. dark, bold, cinematic, minimalist..."
+          value={form.style_notes}
+          onChange={set('style_notes')}
+        />
       </div>
 
       <button type="submit" disabled={loading} className="odin-btn-green w-full mt-1 disabled:opacity-50">

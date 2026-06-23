@@ -9,9 +9,15 @@ const STATUS_CONFIG = {
 export default function TaskQueue({ tasks, selectedTaskId, onSelect }) {
   if (tasks.length === 0) {
     return (
-      <div className="odin-panel text-center py-8">
-        <div className="text-odin-dim text-sm">No tasks yet.</div>
-        <div className="text-odin-dim/50 text-xs mt-1">Create one to launch the pipeline.</div>
+      <div className="odin-panel flex flex-col items-center gap-1 py-8 font-mono text-xs text-odin-dim/50 select-none">
+        <span>&gt; QUEUE EMPTY</span>
+        <span className="flex items-center">
+          &gt;&nbsp;NO TASKS IN PIPELINE
+          <span className="cursor-blink text-odin-green ml-0.5">▋</span>
+        </span>
+        <span className="text-[10px] text-odin-dim/30 mt-2">
+          Use [ RUN DEMO ] or create a task above.
+        </span>
       </div>
     )
   }

@@ -1,61 +1,131 @@
 import { useState } from 'react'
 
-const AGENT_COLORS = {
-  'Brief Agent':    'border-odin-cyan text-odin-cyan',
-  'Concept Agent':  'border-odin-purple text-odin-purple',
-  'Prompt Agent':   'border-yellow-400 text-yellow-400',
-  'Design Agent':   'border-pink-400 text-pink-400',
-  'QA Agent':       'border-orange-400 text-orange-400',
-  'Delivery Agent': 'border-odin-green text-odin-green',
+const AGENT_CONFIG = {
+  'Brief Agent':    { color: 'text-odin-cyan',   leftBorder: 'border-l-odin-cyan',   headerBg: 'bg-odin-cyan/5'   },
+  'Concept Agent':  { color: 'text-odin-purple',  leftBorder: 'border-l-odin-purple', headerBg: 'bg-odin-purple/5' },
+  'Prompt Agent':   { color: 'text-yellow-400',   leftBorder: 'border-l-yellow-400',  headerBg: 'bg-yellow-400/5'  },
+  'Design Agent':   { color: 'text-pink-400',     leftBorder: 'border-l-pink-400',    headerBg: 'bg-pink-400/5'    },
+  'QA Agent':       { color: 'text-orange-400',   leftBorder: 'border-l-orange-400',  headerBg: 'bg-orange-400/5'  },
+  'Delivery Agent': { color: 'text-odin-green',   leftBorder: 'border-l-odin-green',  headerBg: 'bg-odin-green/5'  },
+}
+
+const FALLBACK_CFG = { color: 'text-odin-dim', leftBorder: 'border-l-odin-border', headerBg: '' }
+
+function CopyButton({ content }) {
+  const [state, setState] = useState('idle')
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(content).then(() => {
+      setState('copied')
+      setTimeout(() => setState('idle'), 1500)
+    }).catch(() => setState('idle'))
+  }
+
+  return (
+    <button
+      onClick={handleCopy}
+      className={`text-[10px] font-mono px-2 py-0.5 rounded border transition-all shrink-0
+        ${state === 'copied'
+          ? 'border-odin-green text-odin-green'
+          : 'border-odin-border text-odin-dim hover:border-odin-cyan hover:text-odin-cyan'
+        }`}
+    >
+      {state === 'copied' ? '[ COPIED ]' : '[ COPY ]'}
+    </button>
+  )
+}
+
+function OutputCard({ output, defaultExpanded }) {
+  const [expanded, setExpanded] = useState(defaultExpanded)
+  const cfg = AGENT_CONFIG[output.agent_name] || FALLBACK_CFG
+
+  const ts = output.created_at
+    ? new Date(output.created_at).toLocaleTimeString('en-US', { hour12: false })
+    : null
+
+  return (
+    <div
+      className={`rounded-lg border border-odin-border border-l-[3px] bg-odin-bg
+                  overflow-hidden transition-all duration-300 ${cfg.leftBorder}`}
+    >
+      {/* Card header */}
+      <div className={`flex items-center justify-between gap-2 px-3 py-2 ${cfg.headerBg}`}>
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <span className={`text-xs font-bold shrink-0 ${cfg.color}`}>
+            {output.agent_name}
+          </span>
+          <span className="text-[10px] px-1.5 py-px rounded border border-odin-border text-odin-dim font-mono uppercase tracking-wider shrink-0">
+            {output.output_type}
+          </span>
+          {ts && (
+            <span className="text-[10px] text-odin-dim/40 font-mono hidden sm:block shrink-0">
+              {ts}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-1.5">
+          <CopyButton content={output.content} />
+          <button
+            onClick={() => setExpanded(e => !e)}
+            className="text-[10px] text-odin-dim hover:text-white transition-colors font-mono w-5 text-center"
+          >
+            {expanded ? '▲' : '▼'}
+          </button>
+        </div>
+      </div>
+
+      {/* Collapsible content */}
+      {expanded && (
+        <pre className="px-3 py-3 text-xs text-gray-300 overflow-auto max-h-56
+                        whitespace-pre-wrap leading-relaxed font-mono
+                        border-t border-odin-border bg-odin-bg">
+          {output.content}
+        </pre>
+      )}
+    </div>
+  )
 }
 
 export default function OutputPanel({ outputs }) {
-  const [active, setActive] = useState(null)
-
   if (outputs.length === 0) {
     return (
-      <div className="odin-panel text-center py-8">
-        <div className="text-odin-dim text-sm">No outputs yet.</div>
-        <div className="text-odin-dim/50 text-xs mt-1">Select a task with results to view agent outputs.</div>
+      <div className="odin-panel py-8">
+        <div className="flex flex-col items-center gap-1 font-mono text-xs text-odin-dim/50 select-none">
+          <span>&gt; SYSTEM READY</span>
+          <span className="flex items-center gap-0">
+            &gt;&nbsp;AWAITING AGENT OUTPUT
+            <span className="cursor-blink text-odin-green ml-0.5">▋</span>
+          </span>
+          <span className="text-[10px] text-odin-dim/30 mt-2 text-center">
+            Select a task from the queue — or hit [ RUN DEMO ] to watch the pipeline live.
+          </span>
+        </div>
       </div>
     )
   }
 
-  const current = active !== null ? outputs[active] : outputs[outputs.length - 1]
-  const currentIdx = active !== null ? active : outputs.length - 1
-
   return (
-    <div className="odin-panel flex flex-col gap-3 p-0 overflow-hidden">
-      <div className="px-4 py-2 border-b border-odin-border text-odin-cyan text-xs font-bold uppercase tracking-widest">
-        // Agent Outputs
+    <div className="odin-panel flex flex-col gap-0 p-0 overflow-hidden">
+      {/* Panel header */}
+      <div className="px-4 py-2 border-b border-odin-border flex items-center justify-between shrink-0">
+        <span className="text-odin-cyan text-xs font-bold uppercase tracking-widest">
+          // Output Gallery
+        </span>
+        <span className="text-[10px] text-odin-dim font-mono">
+          {outputs.length}&nbsp;/&nbsp;6 agents
+        </span>
       </div>
 
-      <div className="flex gap-2 px-4 flex-wrap">
-        {outputs.map((out, i) => {
-          const col = AGENT_COLORS[out.agent_name] || 'border-odin-dim text-odin-dim'
-          return (
-            <button
-              key={i}
-              onClick={() => setActive(i)}
-              className={`text-xs px-2 py-1 rounded border font-mono transition-all
-                ${i === currentIdx ? col + ' bg-white/5' : 'border-odin-border text-odin-dim hover:border-odin-dim'}`}
-            >
-              {out.agent_name.replace(' Agent', '')}
-            </button>
-          )
-        })}
+      {/* Cards */}
+      <div className="flex flex-col gap-2 p-4 overflow-y-auto max-h-[32rem]">
+        {outputs.map((out, i) => (
+          <OutputCard
+            key={`${out.agent_name}-${i}`}
+            output={out}
+            defaultExpanded={i === outputs.length - 1}
+          />
+        ))}
       </div>
-
-      {current && (
-        <div className="px-4 pb-4">
-          <div className={`text-xs font-bold mb-2 ${(AGENT_COLORS[current.agent_name] || 'text-odin-dim').split(' ')[1]}`}>
-            {current.agent_name} — {current.output_type}
-          </div>
-          <pre className="bg-odin-bg rounded p-3 text-xs text-gray-300 overflow-auto max-h-72 whitespace-pre-wrap leading-relaxed">
-            {current.content}
-          </pre>
-        </div>
-      )}
     </div>
   )
 }

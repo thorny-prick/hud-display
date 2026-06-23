@@ -1,0 +1,5 @@
+export const APP_NAME           = 'O.D.I.N Agent Habitat'
+export const SHORT_NAME         = 'O.D.I.N'
+export const TERMINAL_NAME      = 'O.D.I.N TERMINAL'
+export const TAGLINE            = 'Agent Habitat Command Center'
+export const SYSTEM_STATUS_LABEL = 'SYSTEM ONLINE'
